@@ -1,0 +1,45 @@
+{{- $repoURL := .Values.repoURL }}
+{{- range .Values.applications }}
+{{- $applicationName := .applicationName }}
+{{- $namespace := .namespace }}
+{{- $chartVersion := .chartVersion }}
+{{- $path := .path }}
+{{- $parameters := .parameters }}
+{{- $clusterlabelKey := .clusterlabelKey }}
+---
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: {{ $applicationName }}-apps
+  namespace: openshift-gitops
+spec:
+  generators:
+    - clusterDecisionResource:
+        configMapRef: upstream-placement
+        name: {{ $applicationName }}-placement
+        requeueAfterSeconds: 30
+  template:
+    metadata:
+      name: {{"{{"}}clusterName{{"}}"}}-{{ $applicationName }}'
+    spec:
+      project: "upstream-charts"
+      source:
+        repoURL: {{ $repoURL }}
+        targetRevision: HEAD
+        path: upstream-charts/sources/{{ $path }}
+        helm:
+          valueFiles:
+            - values.yaml
+          {{- if $parameters }}
+          parameters: 
+            {{- toYaml $parameters | nindent 11 }}
+          {{ end -}}
+      destination:
+        name: {{"{{"}}clusterName{{"}}"}}
+        namespace: {{ $namespace }}
+      syncPolicy:
+        automated:
+          prune: true
+        syncOptions:
+          - CreateNamespace=true
+{{- end }}
