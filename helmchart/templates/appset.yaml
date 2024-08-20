@@ -20,7 +20,7 @@ spec:
         requeueAfterSeconds: 30
   template:
     metadata:
-      name: '{{"{{"}} clusterName {{"}}"}}-{{ $applicationName }}'
+      name: "{{"{{"}} clusterName {{"}}"}}-{{ $applicationName }}"
     spec:
       project: "upstream-charts"
       source:
@@ -35,7 +35,7 @@ spec:
             {{- toYaml $parameters | nindent 11 }}
           {{ end -}}
       destination:
-        name: {{"{{"}} clusterName {{"}}"}}
+        name: "{{"{{"}} clusterName {{"}}"}}"
         namespace: {{ $namespace }}
       syncPolicy:
         automated:
