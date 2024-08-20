@@ -7,6 +7,8 @@ applications:
     parameters:
       - name: "example.value.override"
         value: "overridevalue"
+      - name: "example.value.override"
+        value: "overridevalue"
     clusterlabelValue: "mavenir-application1.1"
   - applicationName: app1.12
     namespace: app1Namespace  
